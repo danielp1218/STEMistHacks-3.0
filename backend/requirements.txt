@@ -1,4 +1,4 @@
 opencv-python~=4.10.0.84
-torch~=2.5.0.dev20240720+cu124
+torch~=2.5.0
 ultralytics~=8.2.61
 fastapi~=0.111.1
