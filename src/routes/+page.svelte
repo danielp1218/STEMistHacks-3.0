@@ -33,6 +33,13 @@
 			showHearts = false;
 		}, 5000);
 	};
+
+	let socket = new WebSocket("ws://192.168.1.103:80/stats");
+	let stats: Object;
+	socket.onmessage = (data) => {
+		stats = JSON.parse(data.data);
+	};
+
 </script>
 
 <main class="p-4">
