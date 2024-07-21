@@ -20,7 +20,7 @@
 			reader.readAsDataURL(data.data);
 		};
 
-		let socket = new WebSocket(`ws://${serverAddress}/stats`);
+		let statSocket = new WebSocket(`ws://${serverAddress}/stats`);
 		statSocket.onmessage = (data) => {
 			stats = JSON.parse(data.data);
 		};
@@ -44,7 +44,7 @@
 		}, 5000);
 	};
 
-	const feed = () => {
+	const feed = async () => {
 		const response = await fetch(`${serverAddress}/feed`, {
 			method: "POST",
 			headers: {
