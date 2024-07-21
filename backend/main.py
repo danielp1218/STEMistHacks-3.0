@@ -51,8 +51,8 @@ class BackgroundRunner:
                     instantaneousEnergy = math.sqrt(pow(midPoint[0] - self.prev_point[0], 2) + pow(midPoint[1] - self.prev_point[1], 2))
                     instantaneousEnergy = pow(math.atan(instantaneousEnergy) / math.pi * 4.6403712297, 3)  # magic number :o
                     self.stats.energy = (self.stats.energy + instantaneousEnergy * tDelta) / (tDelta + 1)
-
-                if box[2]*box[3] > results[0].frame.shape[0]*results[0].frame.shape[1]/2:
+                print(box[2]*box[3])
+                if box[2]*box[3] > 35000:
                     self.stats.hunger -= tDelta
                 else:
                     self.stats.hunger += tDelta/60
