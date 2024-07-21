@@ -5,9 +5,11 @@ from torch import Tensor
 from ultralytics import YOLO
 import cv2
 from fastapi import FastAPI, WebSocket
+from fastapi.responses import StreamingResponse
 from dataclasses import dataclass
 import time
 import base64
+import io
 
 @dataclass
 class Stats:
@@ -92,3 +94,13 @@ async def get_stats(websocket: WebSocket):
 @app.post("/feed")
 async def feed():
     return {"message": "Not supported :( needed a transistor for raspberry pi to control motor"}
+
+
+@app.get("/get_image")
+async def get_image():
+    # Encode the frame as PNG
+    _, encoded_image = cv2.imencode('.png', runner.frame)
+    # Convert the encoded image to a byte stream
+    byte_image = io.BytesIO(encoded_image)
+    # Return the image as a streaming response
+    return StreamingResponse(byte_image, media_type="image/png")
