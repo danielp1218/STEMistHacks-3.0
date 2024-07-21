@@ -56,8 +56,8 @@ class BackgroundRunner:
                     self.stats.energy = (self.stats.energy + instantaneousEnergy * tDelta) / (
                                 tDelta + 1)
                 self.prev_point = midPoint
-
-                if box[2]*box[3] > results[0].frame.shape[0]*results[0].frame.shape[1]/2:
+                print(box[2] * box[3])
+                if box[2]*box[3] > 35000:
                     self.stats.hunger -= tDelta
                 else:
                     self.stats.hunger += tDelta/60
