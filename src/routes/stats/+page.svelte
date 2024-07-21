@@ -69,6 +69,7 @@
 		<Chart
 			data={pieData}
 			x="value"
+			xRange={[-90, 90]}
 			r="date"
 			rScale={scaleOrdinal()}
 			rRange={keyColors}

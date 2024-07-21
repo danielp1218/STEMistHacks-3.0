@@ -1,11 +1,16 @@
 <script lang="ts">
-	import { Button } from "svelte-ux";
+	import { Button, Progress } from "svelte-ux";
 	import { browser } from "$app/environment";
 	import { Confetti } from "svelte-confetti";
 
 	let cameraFrame: string;
+	let stats: {energy: number, hunger: number, mood: string, in_camera:boolean} = {energy: 0, hunger: 0, mood: "happy", in_camera: false};
+
+
+	const serverAddress = "192.168.1.103:80"; //LAN IP used for testing, would use ngrok/other services for production
+
 	if (browser) {
-		let socket = new WebSocket("ws://192.168.1.103:80/camera");
+		let socket = new WebSocket(`ws://${serverAddress}/camera`);
 		socket.onmessage = (data) => {
 			// Convert blob to bas64
 			let reader = new FileReader();
@@ -13,6 +18,11 @@
 				cameraFrame = (reader.result as string).replace("application/octet-stream", "image/png");
 			};
 			reader.readAsDataURL(data.data);
+		};
+
+		let socket = new WebSocket(`ws://${serverAddress}/stats`);
+		statSocket.onmessage = (data) => {
+			stats = JSON.parse(data.data);
 		};
 	}
 
@@ -34,12 +44,15 @@
 		}, 5000);
 	};
 
-	let socket = new WebSocket("ws://192.168.1.103:80/stats");
-	let stats: Object;
-	socket.onmessage = (data) => {
-		stats = JSON.parse(data.data);
-	};
-
+	const feed = () => {
+		const response = await fetch(`${serverAddress}/feed`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({ amount: 10 }),
+		});
+	}
 </script>
 
 <main class="p-4">
@@ -59,12 +72,24 @@
 					  colorArray={["url(https://static-00.iconduck.com/assets.00/red-heart-emoji-2048x1879-8wl1z711.png)"]} />
 		</div>
 	{/if}
-	<h1 class="font-bold text-4xl pt-8">Camera Name</h1>
+	<h1 class="font-bold text-4xl pt-2">Camera View</h1>
 	<img class="rounded-2xl border-4 border-primary-200 my-4"
 		 src="{cameraFrame}" alt="Camera" />
 	<div class="py-2" />
-	<Button class="w-full text-2xl my-4" variant="fill" color="secondary">Feed</Button>
+	<div class="flex">
+		<Button class="w-32 text-2xl mr-3" variant="fill" color="secondary" on:click={feed}>Feed</Button>
+		<div class="rounded border-2 p-3">
+			<div class="flex">
+				<h3 style="line-height:.4rem; margin-right: 5px">Energy: </h3>
+				<Progress class="ml-3" value={stats.energy} max={100} color="primary">Energy</Progress>
+			</div>
+			<div class="flex mt-5">
+				<h3 style="line-height:.4rem">Hunger: </h3>
+				<Progress class="ml-3" value={stats.hunger} max={100} color="red">Hunger</Progress>
+			</div>
+		</div>
+	</div>
 	<Button class="w-full text-2xl my-4" variant="fill" color="accent" on:click={pet}>Pet ❤️</Button>
-	<Button class="w-full text-2xl my-4" variant="fill" color="primary" on:click={takePhotoAndDownload}>Take Photo
+	<Button class="w-full text-2xl" variant="fill" color="primary" on:click={takePhotoAndDownload}>Take Photo
 	</Button>
 </main>

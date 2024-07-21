@@ -48,7 +48,7 @@
 		/>
 	</svelte:fragment>
 
-	<AppBar title="App Name" class="bg-primary-100 text-primary-contentG">
+	<AppBar title="Pet Sentinel" class="bg-primary-100 text-primary-contentG">
 	</AppBar>
 
 	<slot />

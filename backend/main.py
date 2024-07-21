@@ -37,9 +37,9 @@ class BackgroundRunner:
 
     async def run_main(self):
         while True:
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
             f = self.vid.read()[1]
-            results = self.model.track(f, persist=True)
+            results = self.model.track(f, persist=True, conf=0.1)
             self.frame = results[0].plot()
             if results[0].boxes:
                 self.stats.in_camera = True
@@ -79,7 +79,7 @@ async def websocket_endpoint(websocket: WebSocket):
         #change to png
         frame = cv2.imencode('.png', runner.frame)[1]
         await websocket.send_bytes(frame.tobytes())
-        await asyncio.sleep(1)
+        await asyncio.sleep(0.5)
 
 
 @app.websocket("/stats")
@@ -88,3 +88,7 @@ async def get_stats(websocket: WebSocket):
     while True:
         await websocket.send_json({"energy": runner.stats.energy, "hunger": runner.stats.hunger, "mood": runner.stats.mood, "in_camera": runner.stats.in_camera})
         await asyncio.sleep(1)
+
+@app.post("/feed")
+async def feed():
+    return {"message": "Not supported :( needed a transistor for raspberry pi to control motor"}
